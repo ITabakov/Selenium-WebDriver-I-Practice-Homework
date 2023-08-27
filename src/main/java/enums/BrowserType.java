@@ -1,0 +1,6 @@
+package enums;
+
+public enum BrowserType {
+    CHROME, CHROME_HEADLESS, CHROME_FOR_TESTING, FIREFOX, FIREFOX_HEADLESS, EDGE, EDGE_HEADLESS;
+
+}

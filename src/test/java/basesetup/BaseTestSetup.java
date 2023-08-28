@@ -35,8 +35,8 @@ public abstract class BaseTestSetup {
     }
 
     private static void resetAppState() {
-        driver.findElement(By.xpath("//button[@id='react-burger-menu-btn']")).click();
-        wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//a[@id='reset_sidebar_link']"))).click();
+        driver.findElement(By.xpath(BURGER_MENU_BTN)).click();
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(RESET_SIDEBAR_LINK))).click();
     }
 
     protected static void startWithBrowser(BrowserType browserType) {
@@ -96,47 +96,52 @@ public abstract class BaseTestSetup {
     protected static void authenticateWithUser(String username, String password) {
 
         WebElement usernameInput = wait.until(ExpectedConditions.visibilityOf(
-                driver.findElement(By.xpath("//input[@data-test='username']"))));
+                driver.findElement(By.xpath(INPUT_USERNAME_XPATH))));
         usernameInput.sendKeys(username);
 
-        WebElement passwordInput = driver.findElement(By.xpath("//input[@data-test='password']"));
+        WebElement passwordInput = driver.findElement(By.xpath(INPUT_PASSWORD_XPATH));
         passwordInput.sendKeys(password);
 
-        WebElement loginButton = driver.findElement(By.xpath("//input[@data-test='login-button']"));
+        WebElement loginButton = driver.findElement(By.xpath(LOGIN_BUTTON_XPATH));
         loginButton.click();
 
+    }
+
+    protected void assertPageTitle(String pageTitleXpath) {
+        String pageTitle = driver.findElement(By.xpath(pageTitleXpath)).getText();
+        Assertions.assertEquals("Swag Labs", pageTitle, "Wrong page title");
     }
 
     protected static void addBackpackAndTshirtToShoppingCart() {
 
         // Add Backpack and T -shirt to shopping cart
-        WebElement backpackAddToCardButton = driver.findElement(By.xpath("//button[@data-test='add-to-cart-sauce-labs-backpack']"));
+        WebElement backpackAddToCardButton = driver.findElement(By.xpath(ADD_TO_CART_SAUCE_LABS_BACKPACK_XPATH));
         backpackAddToCardButton.click();
-        WebElement tShirtAddToCardButton = driver.findElement(By.xpath("//button[@data-test='add-to-cart-sauce-labs-bolt-t-shirt']"));
+        WebElement tShirtAddToCardButton = driver.findElement(By.xpath(ADD_TO_CART_SAUCE_LABS_BOLT_T_SHIRT_XPATH));
         tShirtAddToCardButton.click();
 
     }
 
     protected void assertItemsAndPrices() {
         // Assert Items
-        ArrayList<WebElement> items = new ArrayList<>(driver.findElements(By.className("inventory_item_name")));
+        ArrayList<WebElement> items = new ArrayList<>(driver.findElements(By.className(INVENTORY_ITEM_NAME_CLASS)));
         Assertions.assertEquals(2, items.size(), "Items count not as expected");
-        assertProductTitle("(//div[@class='inventory_item_name'])[1]", "Sauce Labs Backpack");
-        assertProductTitle("(//div[@class='inventory_item_name'])[2]", "Sauce Labs Bolt T-Shirt");
+        assertProductTitle(PRODUCT_1_TITLE_XPATH, "Sauce Labs Backpack");
+        assertProductTitle(PRODUCT_2_TITLE_XPATH, "Sauce Labs Bolt T-Shirt");
         // Assert Products Prices
-        assertProductPrice("(//div[@class='inventory_item_price'])[1]", 29.99);
-        assertProductPrice("(//div[@class='inventory_item_price'])[2]", 15.99);
+        assertProductPrice(PRODUCT_1_PRICE_XPATH, 29.99);
+        assertProductPrice(PRODUCT_2_PRICE_XPATH, 15.99);
     }
 
     protected void goToShoppingCart() {
         // Click on Shopping Cart
-        WebElement shoppingCartIcon = driver.findElement(By.xpath("//a[@class='shopping_cart_link']"));
+        WebElement shoppingCartIcon = driver.findElement(By.xpath(SHOPPING_CART_LINK_XPATH));
         shoppingCartIcon.click();
     }
 
     protected void checkout() {
         // Click on Checkout
-        WebElement checkoutButton = driver.findElement(By.xpath("//button[@data-test='checkout']"));
+        WebElement checkoutButton = driver.findElement(By.xpath(CHECKOUT_BUTTON_XPATH));
         checkoutButton.click();
 
         // Assert Fill Contact Details Page
@@ -154,56 +159,53 @@ public abstract class BaseTestSetup {
 
     protected void fillUserDetails() {
         // Fill User Details
-        WebElement firstNameInput = driver.findElement(By.xpath("//input[@data-test='firstName']"));
-        firstNameInput.sendKeys("Ivailo");
-        WebElement lastNameInput = driver.findElement(By.xpath("//input[@data-test='lastName']"));
-        lastNameInput.sendKeys("Tabakov");
-        WebElement postalCodeInput = driver.findElement(By.xpath("//input[@data-test='postalCode']"));
-        postalCodeInput.sendKeys("1233");
+        WebElement firstNameInput = driver.findElement(By.xpath(INPUT_FIRST_NAME_XPATH));
+        firstNameInput.sendKeys(FIRST_NAME);
+        WebElement lastNameInput = driver.findElement(By.xpath(INPUT_LAST_NAME_XPATH));
+        lastNameInput.sendKeys(LAST_NAME);
+        WebElement postalCodeInput = driver.findElement(By.xpath(INPUT_POSTAL_CODE_XPATH));
+        postalCodeInput.sendKeys(POSTAL_CODE);
     }
 
     protected void goToOverviewPage() {
         // Click on Continue
-        WebElement continueButton = driver.findElement(By.xpath("//input[@data-test='continue']"));
+        WebElement continueButton = driver.findElement(By.xpath(CONTINUE_BUTTON_XPATH));
         continueButton.click();
     }
 
     protected void assertOverviewPage() {
         //Assert Items
-        ArrayList<WebElement> items = new ArrayList<>(driver.findElements(By.className("inventory_item_name")));
+        ArrayList<WebElement> items = new ArrayList<>(driver.findElements(By.className(INVENTORY_ITEM_NAME_CLASS)));
         Assertions.assertEquals(2, items.size(), "Items count not as expected");
-        Assertions.assertEquals("Sauce Labs Backpack",
-                driver.findElement(By.xpath("//a[@id='item_4_title_link']/div[@class='inventory_item_name']")).getText(),
+        Assertions.assertEquals(SAUCE_LABS_BACKPACK,
+                driver.findElement(By.xpath(ITEM_1_NAME_XPATH)).getText(),
                 "Wrong product title");
-        Assertions.assertEquals("Sauce Labs Bolt T-Shirt",
-                driver.findElement(By.xpath("//a[@id='item_1_title_link']/div[@class='inventory_item_name']")).getText(),
+        Assertions.assertEquals(SAUCE_LABS_BOLT_T_SHIRT,
+                driver.findElement(By.xpath(ITEM_2_NAME_XPATH)).getText(),
                 "Wrong product title");
         // Assert Products prices
-        assertProductPrice("//*[@id='checkout_summary_container']/div/div[1]/div[3]/div[2]/div[2]/div", 29.99);
-        assertProductPrice("//*[@id='checkout_summary_container']/div/div[1]/div[4]/div[2]/div[2]/div",
-                15.99);
+        assertProductPrice(PRODUCT_1_OVERVIEW_PRICE_XPATH, PRODUCT_1_EXPECTED_PRICE);
+        assertProductPrice(PRODUCT_2_OVERVIEW_PRICE_XPATH, PRODUCT_2_EXPECTED_PRICE);
         // Assert Total Price and Tax
-        String[] productPricesXpaths = {"//*[@id='checkout_summary_container']/div/div[1]/div[3]/div[2]/div[2]/div",
-                "//*[@id='checkout_summary_container']/div/div[1]/div[4]/div[2]/div[2]/div"};
-        assertTotalprice(45.98, productPricesXpaths);
-        assertTotalPriceWithTax("//div[@class='summary_subtotal_label']",
-                "//div[@class='summary_tax_label']", 45.98);
+        String[] productPricesXpaths = {PRODUCT_1_OVERVIEW_PRICE_XPATH, PRODUCT_2_OVERVIEW_PRICE_XPATH};
+        assertTotalprice(PRODUCTS_EXPECTED_TOTAL_PRICE_WITHOUT_TAX, productPricesXpaths);
+        assertTotalPriceWithTax(TOTAL_SUM_XPATH, TAX_XPATH, PRODUCTS_EXPECTED_TOTAL_PRICE_WITHOUT_TAX);
     }
 
     protected void finishOrder() {
-        WebElement finishButton = driver.findElement(By.xpath("//button[@data-test='finish']"));
+        WebElement finishButton = driver.findElement(By.xpath(FINISH_BUTTON_XPATH));
         finishButton.click();
     }
 
     protected void assertFinishedOrder() {
         // Assert Checkout complete page
-        assertCurrentPageUrl("https://www.saucedemo.com/checkout-complete.html", driver.getCurrentUrl());
+        assertCurrentPageUrl(CHECKOUT_COMPLETE_URL, driver.getCurrentUrl());
         // Assert No Items
-        ArrayList<WebElement> items = new ArrayList<>(driver.findElements(By.className("inventory_item_name")));
+        ArrayList<WebElement> items = new ArrayList<>(driver.findElements(By.className(INVENTORY_ITEM_NAME_CLASS)));
         Assertions.assertEquals(0, items.size(), "Items count not as expected");
         // Assert Complete Header Message
         Assertions.assertEquals("Thank you for your order!",
-                driver.findElement(By.xpath("//h2[@class='complete-header']")).getText(),
+                driver.findElement(By.xpath(COMPLETE_HEADER_XPATH)).getText(),
                 "Wrong complete header");
     }
 
@@ -236,12 +238,15 @@ public abstract class BaseTestSetup {
     protected static void assertTotalPriceWithTax(String totalSumXpath, String taxXpath, double expectedTotalSum) {
         double expectedTax = expectedTotalSum * 0.08;
         double totalPrice = Double.parseDouble(
-                driver.findElement(By.xpath("//div[@class='summary_subtotal_label']"))
+                driver.findElement(By.xpath(SUMMARY_SUBTOTAL_LABEL_XPATH))
                         .getText().substring(13));
         double tax = Double.parseDouble(
-                driver.findElement(By.xpath("//div[@class='summary_tax_label']")).getText().substring(6));
+                driver.findElement(By.xpath(TAX_LABEL_XPATH)).getText().substring(6));
         Assertions.assertEquals(String.format("%.2f", expectedTotalSum + expectedTax),
                 String.valueOf(totalPrice + tax), "Wrong total price plus tax");
+        Assertions.assertEquals(EXPECTED_TOTAL_TEXT,
+                driver.findElement(By.xpath(TOTAL_TEXT_XPATH)).getText(),
+                "Wrong Total");
     }
 
 }

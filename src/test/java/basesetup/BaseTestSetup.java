@@ -16,6 +16,7 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.time.Duration;
+import java.util.ArrayList;
 
 import static utils.Constants.*;
 
@@ -118,6 +119,8 @@ public abstract class BaseTestSetup {
 
     protected void assertItemsAndPrices() {
         // Assert Items
+        ArrayList<WebElement> items = new ArrayList<>(driver.findElements(By.className("inventory_item_name")));
+        Assertions.assertEquals(2, items.size(), "Items count not as expected");
         assertProductTitle("(//div[@class='inventory_item_name'])[1]", "Sauce Labs Backpack");
         assertProductTitle("(//div[@class='inventory_item_name'])[2]", "Sauce Labs Bolt T-Shirt");
         // Assert Products Prices
@@ -167,6 +170,8 @@ public abstract class BaseTestSetup {
 
     protected void assertOverviewPage() {
         //Assert Items
+        ArrayList<WebElement> items = new ArrayList<>(driver.findElements(By.className("inventory_item_name")));
+        Assertions.assertEquals(2, items.size(), "Items count not as expected");
         Assertions.assertEquals("Sauce Labs Backpack",
                 driver.findElement(By.xpath("//a[@id='item_4_title_link']/div[@class='inventory_item_name']")).getText(),
                 "Wrong product title");
@@ -193,6 +198,9 @@ public abstract class BaseTestSetup {
     protected void assertFinishedOrder() {
         // Assert Checkout complete page
         assertCurrentPageUrl("https://www.saucedemo.com/checkout-complete.html", driver.getCurrentUrl());
+        // Assert No Items
+        ArrayList<WebElement> items = new ArrayList<>(driver.findElements(By.className("inventory_item_name")));
+        Assertions.assertEquals(0, items.size(), "Items count not as expected");
         // Assert Complete Header Message
         Assertions.assertEquals("Thank you for your order!",
                 driver.findElement(By.xpath("//h2[@class='complete-header']")).getText(),
